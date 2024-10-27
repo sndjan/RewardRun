@@ -1,31 +1,65 @@
-import { StyleSheet } from 'react-native';
+"use dom";
 
-import EditScreenInfo from '@/components/EditScreenInfo';
-import { Text, View } from '@/components/Themed';
+import {
+  View,
+  Text,
+  StyleSheet,
+  SafeAreaView,
+  Pressable,
+  Button,
+} from "react-native";
+import { Link, Stack } from "expo-router";
 
-export default function TabOneScreen() {
+import { useCameraPermissions } from "expo-camera";
+
+export default function Home() {
+  const [permission, requestPermission] = useCameraPermissions();
+
+  const isPermissionGranted = Boolean(permission?.granted);
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Tab One</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="app/(tabs)/index.tsx" />
-    </View>
+    <SafeAreaView style={styles.container}>
+      <Stack.Screen options={{ title: "Overview", headerShown: false }} />
+      <Text style={styles.title}>QR Code Scanner</Text>
+      <View style={{ gap: 20 }}>
+        <Button
+          onPress={requestPermission}
+          title="Request Permissions"
+          color="#0E7AFE"
+        />
+        <Pressable onPress={requestPermission}></Pressable>
+        <Link href={{ pathname: "/(tabs)/index copy" }} asChild>
+          <Pressable disabled={!isPermissionGranted}>
+            <Text
+              style={[
+                styles.buttonStyle,
+                { opacity: !isPermissionGranted ? 0.5 : 1 },
+              ]}
+            >
+              Scan Code
+            </Text>
+          </Pressable>
+        </Link>
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    backgroundColor: "black",
+    justifyContent: "space-around",
+    paddingVertical: 80,
   },
   title: {
-    fontSize: 20,
-    fontWeight: 'bold',
+    color: "white",
+    fontSize: 40,
   },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '80%',
+  buttonStyle: {
+    color: "#0E7AFE",
+    fontSize: 20,
+    textAlign: "center",
   },
 });
